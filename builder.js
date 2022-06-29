@@ -23,7 +23,7 @@ module.exports = {
                 }
             }
         }
-        else if (creep.room.memory.hasStorage){
+        else if (creep.room.memory.hasStorage && !creep.memory.full){
             let storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: { structureType: STRUCTURE_CONTAINER }
             });
@@ -31,7 +31,7 @@ module.exports = {
                 creep.moveTo(storage);
             }
         }
-        else {
+        else if (!creep.memory.full) {
             let source = creep.pos.findClosestByPath(FIND_SOURCES);
             if (source != null){
                 if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
