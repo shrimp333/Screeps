@@ -1,9 +1,9 @@
 module.exports = {
     run: function (room) {
         const SPAWN_LIMIT = {
-            harvester: 7,
+            harvester: 3,
             upgrader: 2,
-            builder: 2,
+            builder: 3,
             carry: 1
         }
 
@@ -35,7 +35,7 @@ StructureSpawn.prototype.spawnNextCreep = function () {
     else if (builderCount < builderLimit) {
         this.spawnWorker('builder');
     }
-    else if(carryCount < carryLimit) {
+    else if(carryCount < carryLimit && room.memory.hasStorage) {
         this.spawnWorker('carry');
     }
 }
@@ -59,18 +59,27 @@ StructureSpawn.prototype.spawnWorker = function (type) {
         role: type,
         home: this.room.name
     };
-    let numOfParts = Math.floor(energyCap / 200);
-    let leftEnergy = energyCap % 200;
-    let numOfExtra = Math.floor(leftEnergy / 100)
+    let pointsAvailable = energyCap;
 
-    for(let i = 0; i < numOfParts; i++) {
-        body.push(WORK);
-        body.push(CARRY);
-        body.push(MOVE);
-    }
-    for(let i = 0; i < numOfExtra; i++) {
+    while(pointsAvailable > 0) {
+        if (pointsAvailable >= 200) {
+            body.push(WORK);
             body.push(CARRY);
             body.push(MOVE);
+            pointsAvailable -= 200;
+        }
+        else if (pointsAvailable >= 100) {
+            body.push(CARRY);
+            body.push(MOVE);
+            pointsAvailable -= 100;
+        }
+        else if (pointsAvailable >= 50) {
+            body.push(MOVE);
+            pointsAvailable -= 50;
+        }
+        else {
+            break;
+        }
     }
     this.spawnCreep(body,name,{memory: creepMemory});
 }
