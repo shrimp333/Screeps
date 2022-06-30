@@ -1,3 +1,5 @@
+const { filter } = require("lodash");
+
 module.exports = {
     run: function (creep) {
         if (creep.memory.full && creep.store[RESOURCE_ENERGY] == 0) {
@@ -16,21 +18,23 @@ module.exports = {
                     creep.moveTo(storage);
                 }
                 else {
-                    let spawn = creep.pos.findClosestByPath(creep.room.memory.sources);
+                    let spawn = creep.pos.findClosestByPath(FIND_MY_SPAWNS);
                     if (creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(spawn);
                     }
                 }
             }
             else {
-                let spawn = creep.pos.findClosestByPath(creep.room.memory.sources);
+                let spawn = creep.pos.findClosestByPath(FIND_MY_SPAWNS);
                 if (creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(spawn);
                 }
             }
         }
         else {
-            let source = creep.pos.findClosestByPath(FIND_SOURCES);
+            let source = creep.pos.findClosestByPath(_.filter(creep.room.find(FIND_SOURCES), function(o) {
+                return o.id != '42283eacd108b17819cfd6a7'
+            }))
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
