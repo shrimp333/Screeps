@@ -30,6 +30,16 @@ module.exports.loop = function () {
 
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
+            if (Memory.creeps[name].role == 'harvester') {
+                let home = Memory.creeps[name].home;
+                let assigned = Memory.creeps[name].source
+                let sources = Game.rooms[home].memory.sources
+                for(i = 0; i < sources.length; i++) {
+                    if (sources[i].object.id == assigned.id) {
+                        Game.rooms[home].memory.sources[i]['workersAssigned'] -= 1;
+                    }
+                }
+            }
             delete Memory.creeps[name];
         }
     }

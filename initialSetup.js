@@ -22,7 +22,6 @@ module.exports = {
                 bigAssigned: false
             })
         }
-        console.log('adding')
         room.memory.sources = sourceArray;
     }
 }

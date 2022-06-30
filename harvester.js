@@ -32,9 +32,7 @@ module.exports = {
             }
         }
         else {
-            let source = creep.pos.findClosestByPath(_.filter(creep.room.find(FIND_SOURCES), function(o) {
-                return o.id != '42283eacd108b17819cfd6a7'
-            }))
+            let source = Game.getObjectById(creep.memory.source)
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
