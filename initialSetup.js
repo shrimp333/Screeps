@@ -1,5 +1,5 @@
 module.exports = {
-    run: function (room, name) {
+    run: function (room) {
         room.memory.isSetup = true;
         room.memory.hasStorage = false;
         room.memory.canBigHarvester = false;
@@ -18,7 +18,8 @@ module.exports = {
             sourceArray.push({
                 object: sources[i],
                 amountWorkers: num,
-                workersAssigned: 0
+                workersAssigned: 0,
+                bigAssigned: false
             })
         }
         console.log('adding')
