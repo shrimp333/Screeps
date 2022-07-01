@@ -35,7 +35,7 @@ module.exports.loop = function () {
                 let assigned = Memory.creeps[name].source
                 let sources = Game.rooms[home].memory.sources
                 for(i = 0; i < sources.length; i++) {
-                    if (sources[i].object.id == assigned.id) {
+                    if (sources[i].object.id == assigned) {
                         Game.rooms[home].memory.sources[i]['workersAssigned'] -= 1;
                     }
                 }

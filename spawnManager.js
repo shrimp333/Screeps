@@ -4,8 +4,8 @@ module.exports = {
     run: function (room) {
         const SPAWN_LIMIT = {
             harvester: 9,
-            upgrader: 1,
-            builder: 0,
+            upgrader: 2,
+            builder: 2,
             carry: 0
         }
 
@@ -34,24 +34,26 @@ StructureSpawn.prototype.spawnNextCreep = function () {
         return;
     }
     if (carryCount == 0 && room.memory.hasStorage) {
-        this.spawnCreep([CARRY,CARRY,CARRY,MOVE,MOVE,MOVE],'tempcarry',{memory: {
-            role: 'carry',
-            full: false,
-            home: this.room.name
-        }});
+        this.spawnCreep([CARRY, CARRY, CARRY, MOVE, MOVE, MOVE], 'tempcarry', {
+            memory: {
+                role: 'carry',
+                full: false,
+                home: this.room.name
+            }
+        });
     }
     if (energyCap != this.room.energyAvailable) {
         return;
     }
     if (harvesterCount < harvesterLimit) {
-        if(energyCap >= 550) {
+        if (energyCap >= 550) {
             this.spawnBigHarvester()
         }
         else {
             this.spawnHarvester(false);
         }
     }
-    else if(carryCount < carryLimit && room.memory.hasStorage) {
+    else if (carryCount < carryLimit && room.memory.hasStorage) {
         this.spawnCarry();
     }
     else if (upgraderCount < upgraderLimit) {
@@ -83,7 +85,7 @@ StructureSpawn.prototype.spawnWorker = function (type) {
     };
     let pointsAvailable = energyCap;
 
-    while(pointsAvailable > 0) {
+    while (pointsAvailable > 0) {
         if (pointsAvailable >= 200) {
             body.push(WORK);
             body.push(CARRY);
@@ -103,7 +105,7 @@ StructureSpawn.prototype.spawnWorker = function (type) {
             break;
         }
     }
-    this.spawnCreep(body,name,{memory: creepMemory});
+    this.spawnCreep(body, name, { memory: creepMemory });
 }
 
 StructureSpawn.prototype.spawnCarry = function () {
@@ -127,7 +129,7 @@ StructureSpawn.prototype.spawnCarry = function () {
         home: this.room.name
     };
 
-    while(pointsAvailable > 0) {
+    while (pointsAvailable > 0) {
         if (pointsAvailable >= 100) {
             body.push(CARRY);
             body.push(MOVE);
@@ -141,9 +143,9 @@ StructureSpawn.prototype.spawnCarry = function () {
             break;
         }
     }
-    this.spawnCreep(body,name,{memory: creepMemory});
+    this.spawnCreep(body, name, { memory: creepMemory });
 }
-StructureSpawn.prototype.spawnHarvester = function(temp) {
+StructureSpawn.prototype.spawnHarvester = function (temp) {
     function generatenName() {
         let prefix = 'harvester'
         let name;
@@ -160,11 +162,21 @@ StructureSpawn.prototype.spawnHarvester = function(temp) {
     let assignedSource;
     let body = [];
     let sources = this.room.memory.sources
-    for(let i = 0; i < sources.length; i++) {
-        if (sources[i].amountWorkers > sources[i].workersAssigned && !sources[i].bigAssigned) {
-            assignedSource = sources[i].object.id;
-            this.room.memory.sources[i]['workersAssigned']++;
-            break;
+    for (let i = 0; i < sources.length; i++) {
+        if (this.room.memory.hasStorage) {
+            if (sources[i].amountWorkers > sources[i].workersAssigned && !sources[i].bigAssigned) {
+                assignedSource = sources[i].object.id;
+                this.room.memory.sources[i]['workersAssigned']++;
+                break;
+            }
+        }
+        else {
+            let amount = sources[i].amountWorkers - 1;
+            if (amount > sources[i].workersAssigned && !sources[i].bigAssigned) {
+                assignedSource = sources[i].object.id;
+                this.room.memory.sources[i]['workersAssigned']++;
+                break;
+            }
         }
     }
     let creepMemory = {
@@ -173,13 +185,13 @@ StructureSpawn.prototype.spawnHarvester = function(temp) {
         home: this.room.name,
         source: assignedSource
     };
-    if(temp) {
-        body = [WORK,CARRY,MOVE,CARRY,MOVE]
+    if (temp) {
+        body = [WORK, CARRY, MOVE, CARRY, MOVE]
         name = 'tempharvest'
     }
     else {
         let pointsAvailable = this.room.energyCapacityAvailable;
-        while(pointsAvailable > 0) {
+        while (pointsAvailable > 0) {
             if (pointsAvailable >= 200) {
                 body.push(WORK);
                 body.push(CARRY);
@@ -200,7 +212,7 @@ StructureSpawn.prototype.spawnHarvester = function(temp) {
             }
         }
     }
-    this.spawnCreep(body,name,{memory: creepMemory});
+    this.spawnCreep(body, name, { memory: creepMemory });
 }
 StructureSpawn.prototype.spawnBigHarvester = function () {
     function generatenName(prefix) {
@@ -220,6 +232,6 @@ StructureSpawn.prototype.spawnBigHarvester = function () {
         role: 'bigHarvester',
         home: this.room.name
     };
-    
-    this.spawnCreep([WORK,WORK,WORK,WORK,WORK,MOVE],name,{memory: creepMemory});
+
+    this.spawnCreep([WORK, WORK, WORK, WORK, WORK, MOVE], name, { memory: creepMemory });
 }
