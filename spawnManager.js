@@ -23,7 +23,7 @@ StructureSpawn.prototype.spawnNextCreep = function () {
     let upgraderCount = _.filter(Game.creeps, (creep) => creep.memory.home == room.name && creep.memory.role == 'upgrader').length;
     let builderCount = _.filter(Game.creeps, (creep) => creep.memory.home == room.name && creep.memory.role == 'builder').length;
     let carryCount = _.filter(Game.creeps, (creep) => creep.memory.home == room.name && creep.memory.role == 'carry').length;
-
+ 
     let harvesterLimit = room.memory.spawnLimits['harvester'];
     let upgraderLimit = room.memory.spawnLimits['upgrader'];
     let builderLimit = room.memory.spawnLimits['builder'];
